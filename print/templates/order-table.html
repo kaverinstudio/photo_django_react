@@ -1,0 +1,23 @@
+{% load mathfilters %}
+<table>
+  <tr>
+    <th>Фотография</th>
+    <th>Количество</th>
+    <th>Стоимость</th>
+    <th>Цена</th>
+  </tr>
+  {% for order in table_context %}
+  <tr>
+    <td>{{ order.name }}</td>
+    <td>{{ order.count }}</td>
+    <td>{{ order.price }}</td>
+    <td>{{ order.count|mul:order.price }}</td>
+  </tr>
+  {% endfor %}
+  <tr>
+    <th>Итого</th>
+    <th></th>
+    <th></th>
+    <th>{{ total }}</th>
+  </tr>
+</table>

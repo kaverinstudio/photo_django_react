@@ -1,0 +1,52 @@
+{% load mathfilters %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body style="max-width: 600px">
+  <h3>Здравствуйте!</h3>
+  <p>Ваш заказ получен!</p>
+  <p>Наш менеджер свяжется с Вами в ближайшее время для уточнения деталей</p>
+    <ul>
+      {% for key, value in order_fields.item %}
+      <li><b>{{ key }}:</b>{{ value }}</li>
+      {% endfor %}
+    </ul>
+    <hr>
+    <ul>
+      <li><b>Имя: </b>{{ order.first_name }}</li>
+      {% if order.last_name %}
+      <li><b>Фамилия: </b>{{ order.last_name }}</li>
+      {% endif %}
+      <li><b>Телефон: </b>{{ order.phone }}</li>
+      {% if order.email %}
+      <li><b>Email: </b>{{ order.email }}</li>
+      {% endif %}
+      <li><b>Доставка: </b>{% if order.delivery == 'no' %}Самовывоз{% else %}{{ order.address }}{% endif %}</li>
+      {% if order.comments %}
+      <li><b>Коментарии: </b>{{ order.comments }}</li>
+      {% endif %}
+    </ul>
+    <b>Заказ:</b>
+    <table border="1" style="width: 100%">
+      <tr>
+        <th style="width: 25%; text-align: center; font-weight: bold">Фотография</th>
+        <th style="width: 25%; text-align: center; font-weight: bold">Количество</th>
+        <th style="width: 25%; text-align: center; font-weight: bold">Стоимость</th>
+        <th style="width: 25%; text-align: center; font-weight: bold">Цена</th>
+      </tr>
+      {% for order in data %}
+      <tr>
+        <td style="width: 25%; text-align: center">{{ order.name }}</td>
+        <td style="width: 25%; text-align: center">{{ order.count }}</td>
+        <td style="width: 25%; text-align: center">{{ order.price }}</td>
+        <td style="width: 25%; text-align: center">{{ order.count|mul:order.price }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+</body>
+</html>
