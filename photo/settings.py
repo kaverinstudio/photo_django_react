@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'user.apps.UserConfig',
     'print.apps.PrintConfig',
     'emails.apps.EmailsConfig',
+    'portfolio.apps.PortfolioConfig',
     'rest_framework',
     'corsheaders',
     'knox',

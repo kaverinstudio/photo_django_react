@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Photo, Services, PapierSize, PapierType, Orders, OrderPhotos
+from .models import Photo, Services, PapierSize, PapierType, Orders
 
 
 class ServiceSerializer(serializers.ModelSerializer):
@@ -58,8 +58,8 @@ class FileUpdateSerializer(serializers.Serializer):
         instance.save()
         return instance
 
-class OrderSerializer(serializers.ModelSerializer):
 
+class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Orders
         fields = ['first_name', 'last_name', 'phone', 'email', 'delivery', 'comments', 'address']
@@ -72,9 +72,4 @@ class OrderSerializer(serializers.ModelSerializer):
 
         order = Orders.objects.create(user=user, **validated_data)
         return order
-
-# class PhotoOrderSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = OrderPhotos
-#         fields = ['']
 
