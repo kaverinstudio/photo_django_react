@@ -1,9 +1,15 @@
 from rest_framework import serializers
-from .models import PortfolioPhoto
+from .models import PortfolioPhoto, Portfolio
 
 
-class PortfolioSerializer(serializers.ModelSerializer):
+class PortfolioPhotoSerializer(serializers.ModelSerializer):
     class Meta:
         model = PortfolioPhoto
         fields = ['src', 'width', 'height']
+
+
+class PortfolioCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Portfolio
+        fields = '__all__'
 
