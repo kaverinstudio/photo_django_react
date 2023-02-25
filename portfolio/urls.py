@@ -6,7 +6,7 @@ router = routers.DefaultRouter()
 
 urlpatterns = [
     path('api/portfolio/', PortfolioAllViewAPI.as_view()),
-    path('api/portfolio/<int:pk>', PortfolioCategoryViewAPI.as_view())
+    path('api/portfolio/<int:pk>/', PortfolioCategoryViewAPI.as_view())
 ]
 
 urlpatterns += router.urls

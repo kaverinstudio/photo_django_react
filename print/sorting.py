@@ -36,6 +36,7 @@ def move_files(request, order_id, date):
 
     shutil.make_archive(user_order, 'zip', user_order)
     shutil.rmtree(user_order)
+    os.rmdir(moveFrom)
     order = Orders.objects.all().filter(id=order_id)
     order.update(link=f'/photo/pictures/orders/{user_name}_' + date, file_field=f'orders/{user_name}_' + date + '.zip')
     list_photos.delete()

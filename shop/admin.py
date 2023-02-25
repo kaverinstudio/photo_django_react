@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.template.loader import get_template
 from django.utils.translation import gettext as _
 from django.utils.safestring import mark_safe
-from .models import ProductModel, ProductCategoryModel, ProductPhoto
+from .models import ProductModel, ProductCategoryModel, ProductPhoto, ShopOrderModel
 
 
 class ProductCategoryAdmin(admin.ModelAdmin):
@@ -39,4 +39,13 @@ class ProductAdmin(admin.ModelAdmin):
     def image_show(self, obj):
         img = ProductPhoto.objects.filter(for_product_id=obj.id).first()
         return mark_safe(f'<img src="{img.image.url}" style="max-height: 60px;"')
+
+
+@admin.register(ShopOrderModel)
+class ShopOrderView(admin.ModelAdmin):
+    list_display = ['first_name', 'phone', 'delivery', 'address', 'comments', 'create_at']
+    readonly_fields = ['first_name', 'last_name', 'email', 'phone', 'delivery', 'address', 'comments', 'create_at', 'products', 'user']
+    search_fields = ['first_name', 'user']
+
+    list_filter = ['first_name', 'phone', 'create_at']
 

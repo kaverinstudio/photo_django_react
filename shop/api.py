@@ -1,9 +1,9 @@
 import json
-
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import permissions, generics
 from rest_framework.response import Response
-from .serializer import ProductModelSerializer, ProductPhotoSerializer, ProductCategorySerializer
-from .models import ProductModel, ProductPhoto, ProductCategoryModel
+from .serializer import ProductModelSerializer, ProductPhotoSerializer, CartCreateSerializer, CartViewSerializer
+from .models import ProductModel, ProductPhoto, ProductCategoryModel, CartModel
 
 
 class AllProductViewAPI(generics.ListAPIView):
@@ -51,11 +51,42 @@ class OneProductViewAPI(generics.RetrieveAPIView):
 
     def get(self, request, *args, **kwargs):
         product = self.get_object()
-        print(product.id)
         product_serializer = ProductModelSerializer(product)
         photos = ProductPhoto.objects.filter(for_product_id=product.id)
         photos_serializer = ProductPhotoSerializer(photos, many=True)
         return Response({
             'products': product_serializer.data,
             'photos': photos_serializer.data
+        })
+
+
+class CartCreateViewAPI(generics.GenericAPIView):
+    serializer_class = CartCreateSerializer
+    permission_classes = [
+        permissions.AllowAny
+    ]
+
+    # parser_classes = [MultiPartParser, FormParser]
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        products_in_cart = CartModel.get_user_cart(request)
+        products_serializer = CartViewSerializer(products_in_cart, many=True)
+        return Response({
+            'product': products_serializer.data
+        })
+
+
+class CartViewAPI(generics.GenericAPIView):
+    permission_classes = [
+        permissions.AllowAny
+    ]
+
+    def get(self, request):
+        product = CartModel.get_user_cart(request)
+        serializer = CartViewSerializer(product, many=True)
+        return Response({
+            'product': serializer.data
         })

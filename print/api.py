@@ -119,7 +119,7 @@ class ConfirmOrderAPI(generics.GenericAPIView):
             user_email = request.user.email
             email.sending_email(type_id=2, email=user_email, order=order, data=order_detail)
         else:
-            if request.data['email'] is not None:
+            if 'email' in request.data:
                 user_email = request.data['email']
                 email.sending_email(type_id=2, email=user_email, order=order, data=order_detail)
         email.sending_email(type_id=1, order=order, data=order_detail)
