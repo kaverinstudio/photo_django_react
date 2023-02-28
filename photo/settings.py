@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'knox',
     'mathfilters',
+    'django_filters',
     'django_cleanup.apps.CleanupConfig',
 ]
 

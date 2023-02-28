@@ -12,7 +12,24 @@ class AllProductViewAPI(generics.ListAPIView):
     ]
 
     def list(self, request, *args, **kwargs):
-        products = ProductModel.objects.all()
+        if request.query_params.get('minPrice') and request.query_params.get('maxPrice') and request.query_params.get('sort'):
+            kwargs = {}
+            if request.query_params.get('manufactured'):
+                manufactured = []
+                for item in request.query_params.get('manufactured').split(','):
+                    manufactured.append(str(item))
+                kwargs['manufactured__in'] = manufactured
+            if request.query_params.get('cat'):
+                cat = []
+                for item in request.query_params.get('cat').split(','):
+                    cat.append(str(item))
+                kwargs['category__category_name__in'] = cat
+            products = ProductModel.objects.order_by(request.query_params.get('sort')) \
+                .filter(
+                price__range=(request.query_params.get('minPrice'), request.query_params.get('maxPrice'))).filter(
+                **kwargs)
+        else:
+            products = ProductModel.objects.all().order_by('rating')
         products_serializer = ProductModelSerializer(products, many=True)
         photos = ProductPhoto.objects.all()
         photos_serializer = ProductPhotoSerializer(photos, many=True)
@@ -29,7 +46,26 @@ class ProductCategoryViewAPI(generics.ListAPIView):
 
     def list(self, request, *args, **kwargs):
         cat_id = ProductCategoryModel.objects.get(category_slug=self.kwargs['category_slug'])
-        products = ProductModel.objects.filter(category_id=cat_id.id)
+        kwargs = {}
+        kwargs['category_id'] = cat_id.id
+        if request.query_params.get('minPrice') and request.query_params.get('maxPrice') and request.query_params.get(
+                'sort'):
+            if request.query_params.get('manufactured'):
+                manufactured = []
+                for item in request.query_params.get('manufactured').split(','):
+                    manufactured.append(str(item))
+                kwargs['manufactured__in'] = manufactured
+            if request.query_params.get('cat'):
+                cat = []
+                for item in request.query_params.get('cat').split(','):
+                    cat.append(str(item))
+                kwargs['category_name__in'] = cat
+            products = ProductModel.objects.order_by(request.query_params.get('sort')) \
+                .filter(
+                price__range=(request.query_params.get('minPrice'), request.query_params.get('maxPrice'))).filter(
+                **kwargs).filter()
+        else:
+            products = ProductModel.objects.filter(category_id=cat_id.id).order_by('rating')
         products_serializer = ProductModelSerializer(products, many=True)
         photos = ProductPhoto.objects.filter(for_category=cat_id.id)
         photos_serializer = ProductPhotoSerializer(photos, many=True)
@@ -65,8 +101,6 @@ class CartCreateViewAPI(generics.GenericAPIView):
     permission_classes = [
         permissions.AllowAny
     ]
-
-    # parser_classes = [MultiPartParser, FormParser]
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

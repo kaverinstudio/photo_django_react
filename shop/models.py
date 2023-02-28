@@ -9,12 +9,15 @@ class ProductModel(models.Model):
     product_name = models.CharField(max_length=50, blank=True, null=True, verbose_name='Наименование товара')
     manufactured = models.CharField(max_length=50, blank=True, null=True, verbose_name='Производитель')
     category = models.ForeignKey('ProductCategoryModel', on_delete=models.PROTECT, verbose_name='Категория товара')
+    # category_name = models.CharField(max_length=50, blank=True, null=True)
+    sizes = models.CharField(max_length=50, blank=True, null=True, verbose_name='Размеры')
     view_count = models.PositiveBigIntegerField(blank=True, null=True, verbose_name='Количество просмотров')
     rating = models.FloatField(blank=True, null=True, verbose_name='Рейтинг')
     description = models.TextField(max_length=1000, blank=True, null=True, verbose_name='Описание товара')
     price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, verbose_name='Цена')
     product_slug = models.SlugField(max_length=255, blank=True, null=True, verbose_name='URL')
     available = models.BooleanField(default=True, verbose_name='В наличии')
+    create_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.product_name
@@ -24,6 +27,7 @@ class ProductModel(models.Model):
 
     def save(self, **kwargs):
         slug_str = self.product_name
+        self.category_name = str(self.category)
         unique_slugify(self, slug_str)
         super(ProductModel, self).save(**kwargs)
 
@@ -62,8 +66,8 @@ class CartModel(models.Model):
     session_key = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
-        verbose_name = 'Корзина товаров'
-        verbose_name_plural = 'Корзины товаров'
+        verbose_name = 'Корзина заказа'
+        verbose_name_plural = 'Корзины заказов'
 
     @classmethod
     def get_user_cart(cls, request):
