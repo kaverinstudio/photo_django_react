@@ -3,6 +3,7 @@ from localStoragePy import localStoragePy
 from django.db import models
 from django.urls import reverse
 from .utils import unique_slugify
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class ProductModel(models.Model):
@@ -61,7 +62,7 @@ class ProductCategoryModel(models.Model):
 
 class CartModel(models.Model):
     product = models.ForeignKey(ProductModel, on_delete=models.CASCADE, verbose_name='Товар в корзине')
-    product_count = models.PositiveIntegerField(blank=True, null=True, default=1)
+    product_count = models.PositiveIntegerField(blank=True, null=True, default=1, validators=[MinValueValidator(1), MaxValueValidator(100)])
     user = models.ForeignKey('user.UserModel', on_delete=models.SET_NULL, blank=True, null=True)
     session_key = models.CharField(max_length=100, blank=True, null=True)
 

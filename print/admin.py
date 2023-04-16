@@ -28,7 +28,7 @@ class OrderView(admin.ModelAdmin):
             price = int(item.count) * int(item.price)
             total += price
         table = get_template('order-table.html')
-        return table.render({'table_context': table_context, 'total': total})
+        return table.render({'table_context': table_context, 'total': total, 'type': 2})
     
     order_table.short_description = 'Таблица заказа'
 

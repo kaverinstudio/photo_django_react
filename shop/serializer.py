@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import ProductModel, ProductPhoto, ProductCategoryModel, CartModel
+from .models import ProductModel, ProductPhoto, ProductCategoryModel, CartModel, ShopOrderModel
 
 
 class ProductCategorySerializer(serializers.ModelSerializer):
@@ -45,6 +45,35 @@ class CartCreateSerializer(serializers.ModelSerializer):
 
 
 class CartViewSerializer(serializers.ModelSerializer):
+    product = ProductModelSerializer(
+        read_only=True
+    )
+
     class Meta:
         model = CartModel
         fields = '__all__'
+
+
+class CartUpdateSerializer(serializers.Serializer):
+    product_count = serializers.IntegerField()
+
+    def update(self, instance, validated_data):
+        instance.product_count = self.context['request'].data['count']
+
+        instance.save()
+        return instance
+
+
+class ShopOrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ShopOrderModel
+        fields = ['first_name', 'last_name', 'phone', 'email', 'delivery', 'comments', 'address', 'products']
+
+    def create(self, validated_data):
+        products = self.context['request'].data['order']
+        if self.context['request'].user.is_anonymous:
+            user = None
+        else:
+            user = self.context['request'].user
+        order = ShopOrderModel.objects.create(user=user, products=products, **validated_data)
+        return order

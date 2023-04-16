@@ -1,9 +1,15 @@
 from rest_framework import routers
-from .api import MainCardViewSet
+from django.urls import path
+from .api import MainCardViewSet, FlatPageViewSet, ContactPageViewAPI
 
 
 router = routers.DefaultRouter()
-router.register('api/main', MainCardViewSet)
+
+urlpatterns = [
+  path("api/main/", MainCardViewSet.as_view()),
+  path("api/main/<slug:slug>/", FlatPageViewSet.as_view()),
+  path("api/contact/", ContactPageViewAPI.as_view())
+]
 
 
-urlpatterns = router.urls
+urlpatterns += router.urls

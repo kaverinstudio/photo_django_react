@@ -23,3 +23,15 @@ class EmailSendingFact(models.Model):
     class Meta:
         verbose_name = 'Имейл заказа фотографий'
         verbose_name_plural = 'Имейлы заказов фотографий'
+
+
+class EmailSendingFactProduct(models.Model):
+    type = models.ForeignKey(EmailType, on_delete=models.CASCADE)
+    order = models.ForeignKey('shop.ShopOrderModel', null=True, blank=True, default=None, on_delete=models.CASCADE)
+    email = models.EmailField()
+    created = models.DateTimeField(auto_now_add=True, auto_now=False)
+    updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+
+    class Meta:
+        verbose_name = 'Имейл заказа в магазине'
+        verbose_name_plural = 'Имейлы заказов в магазине'

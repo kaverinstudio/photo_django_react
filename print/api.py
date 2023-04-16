@@ -117,12 +117,12 @@ class ConfirmOrderAPI(generics.GenericAPIView):
 
         if request.user.is_authenticated:
             user_email = request.user.email
-            email.sending_email(type_id=2, email=user_email, order=order, data=order_detail)
+            email.sending_email(type_id=2, email=user_email, order=order, data=order_detail, order_type=2)
         else:
             if 'email' in request.data:
                 user_email = request.data['email']
-                email.sending_email(type_id=2, email=user_email, order=order, data=order_detail)
-        email.sending_email(type_id=1, order=order, data=order_detail)
+                email.sending_email(type_id=2, email=user_email, order=order, data=order_detail, order_type=2)
+        email.sending_email(type_id=1, order=order, data=order_detail, order_type=2)
 
         return Response({
             'order': OrderSerializer(order, context=self.get_serializer_context()).data,

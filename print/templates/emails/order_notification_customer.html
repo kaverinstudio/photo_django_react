@@ -34,7 +34,7 @@
     <b>Заказ:</b>
     <table border="1" style="width: 100%">
       <tr>
-        <th style="width: 25%; text-align: center; font-weight: bold">Фотография</th>
+        <th style="width: 25%; text-align: center; font-weight: bold">{% if type == 1%}Товар{% else %}Фотографии{% endif %}</th>
         <th style="width: 25%; text-align: center; font-weight: bold">Количество</th>
         <th style="width: 25%; text-align: center; font-weight: bold">Стоимость</th>
         <th style="width: 25%; text-align: center; font-weight: bold">Цена</th>

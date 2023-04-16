@@ -43,9 +43,22 @@ class ProductAdmin(admin.ModelAdmin):
 
 @admin.register(ShopOrderModel)
 class ShopOrderView(admin.ModelAdmin):
-    list_display = ['first_name', 'phone', 'delivery', 'address', 'comments', 'create_at']
-    readonly_fields = ['first_name', 'last_name', 'email', 'phone', 'delivery', 'address', 'comments', 'create_at', 'products', 'user']
+    list_display = ['first_name', 'phone', 'delivery', 'address', 'comments', 'create_at', 'order_table']
+    readonly_fields = ['first_name', 'last_name', 'email', 'phone', 'delivery', 'address', 'comments', 'create_at', 'user', 'order_table']
     search_fields = ['first_name', 'user']
+    exclude = ['products']
 
     list_filter = ['first_name', 'phone', 'create_at']
+
+    def order_table(self, obj):
+        order = ShopOrderModel.objects.get(id=obj.id)
+        table_context = order.products
+        total = 0
+        for item in table_context:
+            price = int(item['count']) * int(item['price'])
+            total += price
+        table = get_template('order-table.html')
+        return table.render({'table_context': table_context, 'total': total, 'type': 1})
+
+    order_table.short_description = 'Таблица заказа'
 
