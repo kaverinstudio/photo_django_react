@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 from modeltranslation.admin import TranslationAdmin
-from .models import MainCardModel, FlatPageModel, ContactPageModel
+from .models import MainCardModel, FlatPageModel, ContactPageModel, MainSliderModel
 
 admin.site.site_header = 'Админпанель сайта Фото № 1'
 
@@ -28,3 +28,12 @@ class FlatPageModelPreview(admin.ModelAdmin):
 admin.site.register(FlatPageModel, FlatPageModelPreview)
 
 admin.site.register(ContactPageModel)
+
+class MainSliderModelPreview(admin.ModelAdmin):
+    fields = ['title', 'post_link', 'image', 'preview']
+    readonly_fields = ['preview']
+    
+    def preview(self, obj):
+        return mark_safe(f'<img src="{obj.image.url}" style="max-height: 200px;>')
+
+admin.site.register(MainSliderModel, MainSliderModelPreview)

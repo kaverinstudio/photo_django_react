@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import MainCardModel, FlatPageModel, ContactPageModel
+from .models import MainCardModel, FlatPageModel, ContactPageModel, MainSliderModel
 
 
 class MainCardSerialiser(serializers.ModelSerializer):
@@ -17,4 +17,10 @@ class FlatPageSerializer(serializers.ModelSerializer):
 class ContactPageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContactPageModel
+        fields = '__all__'
+        
+        
+class MainPageSliderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MainSliderModel
         fields = '__all__'

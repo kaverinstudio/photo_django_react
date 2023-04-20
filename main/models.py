@@ -47,3 +47,16 @@ class ContactPageModel(models.Model):
         verbose_name = 'Страница контакты'
         verbose_name_plural = 'Страница контакты'
         
+        
+class MainSliderModel(models.Model):
+    title = models.CharField(max_length=100, blank=True, null=True, verbose_name='Описание')
+    image = models.ImageField(upload_to='site-images',
+                              verbose_name='Изображение', blank=True, null=True)
+    post_link = models.CharField(max_length=200, null=True, blank=True, verbose_name='Ссылка')
+    
+    def __str__(self):
+        return f'{self.title}'
+
+    class Meta:
+        verbose_name = 'Слайды'
+        verbose_name_plural = 'Слайдер на главной странице'

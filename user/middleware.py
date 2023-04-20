@@ -6,7 +6,7 @@ def init_session(get_response):
         localStorage = localStoragePy('photo', 'postgresql')
         session_key = localStorage.getItem('session_key')
 
-        if request.POST.get('session_key') is not None and session_key is None:
+        if request.POST.get('session_key') is not None:
             localStorage.setItem('session_key', request.POST.get('session_key'))
 
         return get_response(request)

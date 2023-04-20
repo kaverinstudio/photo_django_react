@@ -74,7 +74,7 @@ class CartModel(models.Model):
     def get_user_cart(cls, request):
         localStorage = localStoragePy('photo')
         session_key = localStorage.getItem('session_key')
-
+        
         if request.user.is_anonymous:
             return cls.objects.filter(session_key=session_key)
 

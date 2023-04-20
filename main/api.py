@@ -1,6 +1,6 @@
 from rest_framework import viewsets, permissions, generics
-from .models import MainCardModel, FlatPageModel, ContactPageModel
-from .serializers import MainCardSerialiser, FlatPageSerializer, ContactPageSerializer
+from .models import MainCardModel, FlatPageModel, ContactPageModel, MainSliderModel
+from .serializers import MainCardSerialiser, FlatPageSerializer, ContactPageSerializer, MainPageSliderSerializer
 
 
 class MainCardViewSet(generics.ListAPIView):
@@ -30,5 +30,13 @@ class ContactPageViewAPI(generics.ListAPIView):
     ]
      
     serializer_class = ContactPageSerializer
+    
+    
+class MainPageSliderViewSet(generics.ListAPIView):
+    queryset = MainSliderModel.objects.all()
+    permission_classes = [
+        permissions.AllowAny
+    ]
+    serializer_class = MainPageSliderSerializer
     
     
