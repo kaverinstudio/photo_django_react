@@ -27,6 +27,9 @@ SECRET_KEY = 'django-insecure-w@i_33eb+7qj!g4883)jq!%^@r#gy2!yvbudtgkuax(#po_ul2
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+
 
 
 # Application definition
@@ -106,6 +109,14 @@ DATABASES = {
         'HOST': '127.0.0.1',
         'PORT': '5432',
     }
+    
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'bd_react',
+    #     'USER': 'mysql',
+    #     'PASSWORD': 'mysql',
+    #     'HOST': '127.0.0.1',
+    # }
 }
 
 
@@ -173,9 +184,6 @@ MEDIA_URL = '/photo/pictures/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-CORS_ORIGIN_ALLOW_ALL = True
-CORS_ALLOW_CREDENTIALS = True
 
 # Email settings
 EMAIL_HOST = 'smtp.yandex.ru'
