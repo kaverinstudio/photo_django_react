@@ -54,6 +54,9 @@ class Photo(models.Model):
 
     FORMATS = []
     TYPES = []
+    
+    # FORMATS = [('10x15', '10x15')]
+    # TYPES = [('Глянцевая', 'Глянцевая')]
 
     for f in papier_size:
         form = tuple([f'{f.papier_width}x{f.papier_height}', f'{f.papier_width}x{f.papier_height}'])

@@ -101,22 +101,22 @@ WSGI_APPLICATION = 'photo.wsgi.application'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'photo_react',
-        'USER': 'postgres',
-        'PASSWORD': 'root',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
-    }
-    
     # 'default': {
-    #     'ENGINE': 'django.db.backends.mysql',
-    #     'NAME': 'bd_react',
-    #     'USER': 'mysql',
-    #     'PASSWORD': 'mysql',
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': 'test', #photo_react
+    #     'USER': 'postgres',
+    #     'PASSWORD': 'root',
     #     'HOST': '127.0.0.1',
+    #     'PORT': '5432',
     # }
+    
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'bd_react',
+        'USER': 'mysql',
+        'PASSWORD': 'mysql',
+        'HOST': '127.0.0.1',
+    }
 }
 
 
