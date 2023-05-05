@@ -2,6 +2,25 @@
 
 from django.db import migrations, models
 
+def add_translation(apps, schema_editor):
+    Author = apps.get_model('app_name', 'Author')
+    Language = apps.get_model('app_name', 'Language')
+    Book = apps.get_model('app_name', 'Book')
+
+    # Получаем авторов Аркадий Стругацкий и Борис Стругацкий
+    strugatsky_authors = Author.objects.filter(last_name__in=['Стругацкий Аркадий', 'Стругацкий Борис'])
+
+    # Получаем язык Суахили
+    suahili = Language.objects.get(name='Суахили')
+
+    # Получаем книги авторов Аркадий Стругацкий и Борис Стругацкий
+    strugatsky_books = Book.objects.filter(authors__in=strugatsky_authors)
+
+    # Добавляем язык Суахили в список языков, на которые переведены книги
+    for book in strugatsky_books:
+        book.available_languages.add(suahili)
+    
+
 
 class Migration(migrations.Migration):
 

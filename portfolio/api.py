@@ -11,7 +11,7 @@ class PortfolioAllViewAPI(generics.ListAPIView):
 
     def list(self, request, *args, **kwargs):
         files = PortfolioPhoto.objects.all().order_by('?')
-        serializer = PortfolioPhotoSerializer(files, many=True)
+        serializer = PortfolioPhotoSerializer(files, many=True, context={'request': request})
         category = Portfolio.objects.all()
         category_serializer = PortfolioCategorySerializer(category, many=True)
         return Response({
@@ -32,7 +32,7 @@ class PortfolioCategoryViewAPI(generics.ListAPIView):
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
-        serializer = PortfolioPhotoSerializer(queryset, many=True)
+        serializer = PortfolioPhotoSerializer(queryset, many=True, context={'request': request})
         category = Portfolio.objects.all()
         category_serializer = PortfolioCategorySerializer(category, many=True)
         return Response({

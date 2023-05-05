@@ -49,22 +49,22 @@ class PapierType(models.Model):
 
 
 class Photo(models.Model):
-    papier_size = PapierSize.objects.all()
-    papier_type = PapierType.objects.all()
+    # papier_size = PapierSize.objects.all()
+    # papier_type = PapierType.objects.all()
 
-    FORMATS = []
-    TYPES = []
+    # FORMATS = []
+    # TYPES = []
     
-    # FORMATS = [('10x15', '10x15')]
-    # TYPES = [('Глянцевая', 'Глянцевая')]
+    FORMATS = [('10x15', '10x15')]
+    TYPES = [('Глянцевая', 'Глянцевая')]
 
-    for f in papier_size:
-        form = tuple([f'{f.papier_width}x{f.papier_height}', f'{f.papier_width}x{f.papier_height}'])
-        FORMATS.append(form)
+    # for f in papier_size:
+    #     form = tuple([f'{f.papier_width}x{f.papier_height}', f'{f.papier_width}x{f.papier_height}'])
+    #     FORMATS.append(form)
 
-    for t in papier_type:
-        type = tuple([f'{t.papier_type}', f'{t.papier_type}'])
-        TYPES.append(type)
+    # for t in papier_type:
+    #     type = tuple([f'{t.papier_type}', f'{t.papier_type}'])
+    #     TYPES.append(type)
 
     format = models.CharField(choices=FORMATS, max_length=50, default='10x15', blank=False)
     papier = models.CharField(choices=TYPES, max_length=50, default='Глянцевая', blank=False)
