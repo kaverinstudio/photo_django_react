@@ -72,11 +72,11 @@ class CartModel(models.Model):
 
     @classmethod
     def get_user_cart(cls, request):
-        localStorage = localStoragePy('photo')
+        localStorage = localStoragePy('photo', 'postgresql')
         session_key = localStorage.getItem('session_key')
         
         if request.user.is_anonymous:
-            return cls.objects.filter(session_key=session_key)
+            return cls.objects.filter(models.Q(session_key=session_key))
 
         return cls.objects.filter(models.Q(user=request.user) | models.Q(session_key=session_key))
 
@@ -99,3 +99,21 @@ class ShopOrderModel(models.Model):
     class Meta:
         verbose_name = 'Заказ в магазине'
         verbose_name_plural = 'Заказы в магазине'
+
+
+
+class ProductReviewsModel(models.Model):
+    product = models.ForeignKey(ProductModel, on_delete=models.PROTECT, verbose_name='Товар')
+    user = models.ForeignKey('user.UserModel', on_delete=models.CASCADE, blank=True, null=True)
+    user_name = models.CharField(max_length=100, verbose_name='Имя пользователя')
+    review_text = models.TextField(max_length=1000, verbose_name='Текст отзыва')
+    rating = models.PositiveIntegerField(validators=[MinValueValidator(1), MaxValueValidator(100)], verbose_name='Рейтинг')
+    moderated = models.BooleanField(verbose_name='Отзыв прошел модерацию', null=True)
+    date = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время отзыва')
+    
+    def __str__(self):
+        return f'{self.product.product_name}'
+
+    class Meta:
+        verbose_name = 'Отзыв о товаре'
+        verbose_name_plural = 'Отзывы о товарах'

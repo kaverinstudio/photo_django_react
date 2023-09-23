@@ -9,7 +9,8 @@ from .forms import PortfolioAdminForm
 class PortfolioAdminView(admin.TabularInline):
     model = PortfolioPhoto
 
-    readonly_fields = ['photo_thumbnail', 'width', 'height']
+    readonly_fields = ['photo_thumbnail']
+    exclude = ['src', 'width', 'height']
 
     def photo_thumbnail(self, instance):
         tpl = get_template('show_thumbnail.html')

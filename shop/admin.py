@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.template.loader import get_template
 from django.utils.translation import gettext as _
 from django.utils.safestring import mark_safe
-from .models import ProductModel, ProductCategoryModel, ProductPhoto, ShopOrderModel
+from .models import ProductModel, ProductCategoryModel, ProductPhoto, ShopOrderModel, ProductReviewsModel
 
 
 class ProductCategoryAdmin(admin.ModelAdmin):
@@ -61,4 +61,13 @@ class ShopOrderView(admin.ModelAdmin):
         return table.render({'table_context': table_context, 'total': total, 'type': 1})
 
     order_table.short_description = 'Таблица заказа'
+    
+    
+@admin.register(ProductReviewsModel)
+class ProductReviewsModelAdmin(admin.ModelAdmin):
+    search_fields = ['product', 'user', 'user_name']
+    list_filter = ['moderated', 'product']
+    list_display = ['date', 'product', 'user_name', 'moderated']
+    readonly_fields = ['date', 'user_name', 'rating']
+    exclude = ['avatar']
 

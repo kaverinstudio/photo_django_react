@@ -84,7 +84,7 @@ class Photo(models.Model):
         session_key = localStorage.getItem('session_key')
 
         if request.user.is_anonymous:
-            return cls.objects.filter(session_key=session_key)
+            return cls.objects.filter(models.Q(session_key=session_key))
 
         return cls.objects.filter(models.Q(user=request.user) | models.Q(session_key=session_key))
 

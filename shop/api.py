@@ -2,8 +2,9 @@ import json
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import permissions, generics
 from rest_framework.response import Response
-from .serializer import ProductModelSerializer, ProductPhotoSerializer, CartCreateSerializer, CartViewSerializer, CartUpdateSerializer, ShopOrderSerializer
-from .models import ProductModel, ProductPhoto, ProductCategoryModel, CartModel
+from .serializer import ProductModelSerializer, ProductPhotoSerializer, CartCreateSerializer, \
+    CartViewSerializer, CartUpdateSerializer, ShopOrderSerializer, ProductReviewsSerializer, ProductReviewCreateSerializer
+from .models import ProductModel, ProductPhoto, ProductCategoryModel, CartModel, ProductReviewsModel
 from emails.email import SendingEmail
 
 
@@ -31,9 +32,9 @@ class AllProductViewAPI(generics.ListAPIView):
                 **kwargs)
         else:
             products = ProductModel.objects.all().order_by('rating')
-        products_serializer = ProductModelSerializer(products, many=True)
+        products_serializer = ProductModelSerializer(products, many=True, context={'request': request})
         photos = ProductPhoto.objects.all()
-        photos_serializer = ProductPhotoSerializer(photos, many=True)
+        photos_serializer = ProductPhotoSerializer(photos, many=True, context={'request': request})
         return Response({
             'products': products_serializer.data,
             'photos': photos_serializer.data
@@ -67,9 +68,9 @@ class ProductCategoryViewAPI(generics.ListAPIView):
                 **kwargs).filter()
         else:
             products = ProductModel.objects.filter(category_id=cat_id.id).order_by('rating')
-        products_serializer = ProductModelSerializer(products, many=True)
+        products_serializer = ProductModelSerializer(products, many=True, context={'request': request})
         photos = ProductPhoto.objects.filter(for_category=cat_id.id)
-        photos_serializer = ProductPhotoSerializer(photos, many=True)
+        photos_serializer = ProductPhotoSerializer(photos, many=True, context={'request': request})
         return Response({
             'products': products_serializer.data,
             'photos': photos_serializer.data
@@ -90,10 +91,13 @@ class OneProductViewAPI(generics.RetrieveAPIView):
         product = self.get_object()
         product_serializer = ProductModelSerializer(product)
         photos = ProductPhoto.objects.filter(for_product_id=product.id)
-        photos_serializer = ProductPhotoSerializer(photos, many=True)
+        photos_serializer = ProductPhotoSerializer(photos, many=True, context={'request': request})
+        reviews = ProductReviewsModel.objects.filter(product_id=product.id).filter(moderated=True)
+        reviews_serializer = ProductReviewsSerializer(reviews, many=True)
         return Response({
             'products': product_serializer.data,
-            'photos': photos_serializer.data
+            'photos': photos_serializer.data,
+            'reviews': reviews_serializer.data
         })
 
 
@@ -108,13 +112,13 @@ class CartCreateViewAPI(generics.GenericAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         products_in_cart = CartModel.get_user_cart(request).order_by('id')
-        products_serializer = CartViewSerializer(products_in_cart, many=True)
+        products_serializer = CartViewSerializer(products_in_cart, many=True, context={'request': request})
         photos = []
         photos_list = ProductPhoto.objects.all()
         for item in products_in_cart:
             queryset = photos_list.filter(for_product_id=item.product.id)
             photos.append(queryset[0])
-        photos_serializer = ProductPhotoSerializer(photos, many=True)
+        photos_serializer = ProductPhotoSerializer(photos, many=True, context={'request': request})
         return Response({
             'product': products_serializer.data,
             'photos': photos_serializer.data
@@ -128,13 +132,13 @@ class CartViewAPI(generics.GenericAPIView):
 
     def get(self, request):
         product = CartModel.get_user_cart(request).order_by('id')
-        serializer = CartViewSerializer(product, many=True)
+        serializer = CartViewSerializer(product, many=True, context={'request': request})
         photos = []
         photos_list = ProductPhoto.objects.all()
         for item in product:
             queryset = photos_list.filter(for_product_id=item.product.id)
             photos.append(queryset[0])
-        photos_serializer = ProductPhotoSerializer(photos, many=True)
+        photos_serializer = ProductPhotoSerializer(photos, many=True, context={'request': request})
         return Response({
             'product': serializer.data,
             'photos': photos_serializer.data
@@ -154,15 +158,15 @@ class CartUpdateAPI(generics.UpdateAPIView):
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
-        product_serializer = CartViewSerializer(self.get_queryset(), many=True)
+        serializer = self.get_serializer(instance, data=request.data, partial=True, context={'request': request})
+        product_serializer = CartViewSerializer(self.get_queryset(), many=True, context={'request': request})
         product = self.get_queryset()
         photos = []
         photos_list = ProductPhoto.objects.all()
         for item in product:
             queryset = photos_list.filter(for_product_id=item.product.id)
             photos.append(queryset[0])
-        photos_serializer = ProductPhotoSerializer(photos, many=True)
+        photos_serializer = ProductPhotoSerializer(photos, many=True, context={'request': request})
 
         if serializer.is_valid(raise_exception=True):
             serializer.save()
@@ -186,14 +190,14 @@ class CartDeleteAPI(generics.GenericAPIView):
     def delete(self, request, *args, **kwargs):
         instance = self.get_object()
         instance.delete()
-        product_serializer = CartViewSerializer(self.get_queryset(), many=True)
+        product_serializer = CartViewSerializer(self.get_queryset(), many=True, context={'request': request})
         product = self.get_queryset()
         photos = []
         photos_list = ProductPhoto.objects.all()
         for item in product:
             queryset = photos_list.filter(for_product_id=item.product.id)
             photos.append(queryset[0])
-        photos_serializer = ProductPhotoSerializer(photos, many=True)
+        photos_serializer = ProductPhotoSerializer(photos, many=True, context={'request': request})
         return Response({
             'product': product_serializer.data,
             'photos': photos_serializer.data
@@ -212,7 +216,7 @@ class CartAllDeleteAPI(generics.GenericAPIView):
     def delete(self, request, *args, **kwargs):
         for item in self.get_queryset():
             item.delete()
-        product_serializer = CartViewSerializer(self.get_queryset(), many=True)
+        product_serializer = CartViewSerializer(self.get_queryset(), many=True, context={'request': request})
 
         return Response({
             'product': product_serializer.data,
@@ -249,7 +253,14 @@ class ConfirmShopOrderAPI(generics.GenericAPIView):
         })
 
 
-
-
+class ProductReviewCreateAPI(generics.GenericAPIView):
+    serializer_class = ProductReviewCreateSerializer
+    
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        
+        return Response('Ваш отзыв отправлен на модерацию')
 
 

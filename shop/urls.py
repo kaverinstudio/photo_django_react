@@ -1,6 +1,7 @@
 from rest_framework import routers
 from django.urls import path
-from .api import ProductCategoryViewAPI, AllProductViewAPI, OneProductViewAPI, CartCreateViewAPI, CartViewAPI, CartUpdateAPI, CartDeleteAPI, CartAllDeleteAPI, ConfirmShopOrderAPI
+from .api import ProductCategoryViewAPI, AllProductViewAPI, OneProductViewAPI, CartCreateViewAPI, \
+    CartViewAPI, CartUpdateAPI, CartDeleteAPI, CartAllDeleteAPI, ConfirmShopOrderAPI, ProductReviewCreateAPI
 
 
 router = routers.DefaultRouter()
@@ -14,7 +15,8 @@ urlpatterns = [
     path('api/cart/update/<int:pk>', CartUpdateAPI.as_view()),
     path('api/cart/delete/<int:pk>', CartDeleteAPI.as_view()),
     path('api/cart/delete/', CartAllDeleteAPI.as_view()),
-    path('api/cart/confirm', ConfirmShopOrderAPI.as_view())
+    path('api/cart/confirm', ConfirmShopOrderAPI.as_view()),
+    path('api/reviews/', ProductReviewCreateAPI.as_view())
 ]
 
 urlpatterns += router.urls

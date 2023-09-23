@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import ProductModel, ProductPhoto, ProductCategoryModel, CartModel, ShopOrderModel
+from .models import ProductModel, ProductPhoto, ProductCategoryModel, CartModel, ShopOrderModel, ProductReviewsModel
 
 
 class ProductCategorySerializer(serializers.ModelSerializer):
@@ -77,3 +77,29 @@ class ShopOrderSerializer(serializers.ModelSerializer):
             user = self.context['request'].user
         order = ShopOrderModel.objects.create(user=user, products=products, **validated_data)
         return order
+
+
+class ProductReviewsSerializer(serializers.ModelSerializer):
+    user_avatar = serializers.SerializerMethodField()
+    class Meta:
+        model = ProductReviewsModel
+        fields = '__all__'
+        
+    def get_user_avatar(self, obj):
+        if obj.user:
+            return obj.user.avatar.url
+        return None
+        
+        
+class ProductReviewCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductReviewsModel
+        fields = '__all__'
+        
+    def create(self, validated_data):
+        if self.context['request'].user.is_anonymous:
+            user = None
+        else:
+            user = self.context['request'].user
+        review = ProductReviewsModel.objects.create(user=user, **validated_data)
+        return review

@@ -5,7 +5,7 @@ from .models import PortfolioPhoto, Portfolio
 class PortfolioPhotoSerializer(serializers.ModelSerializer):
     class Meta:
         model = PortfolioPhoto
-        fields = ['src', 'width', 'height']
+        fields = ['src', 'width', 'height', 'photo']
 
 
 class PortfolioCategorySerializer(serializers.ModelSerializer):
