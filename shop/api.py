@@ -1,4 +1,5 @@
 import json
+from knox.auth import TokenAuthentication
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import permissions, generics
 from rest_framework.response import Response
@@ -93,7 +94,7 @@ class OneProductViewAPI(generics.RetrieveAPIView):
         photos = ProductPhoto.objects.filter(for_product_id=product.id)
         photos_serializer = ProductPhotoSerializer(photos, many=True, context={'request': request})
         reviews = ProductReviewsModel.objects.filter(product_id=product.id).filter(moderated=True)
-        reviews_serializer = ProductReviewsSerializer(reviews, many=True)
+        reviews_serializer = ProductReviewsSerializer(reviews, many=True, context={'request': request})
         return Response({
             'products': product_serializer.data,
             'photos': photos_serializer.data,
@@ -106,7 +107,9 @@ class CartCreateViewAPI(generics.GenericAPIView):
     permission_classes = [
         permissions.AllowAny
     ]
-
+    authentication_classes = [
+        TokenAuthentication
+    ]
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -129,6 +132,9 @@ class CartViewAPI(generics.GenericAPIView):
     permission_classes = [
         permissions.AllowAny
     ]
+    authentication_classes = [
+        TokenAuthentication
+    ]
 
     def get(self, request):
         product = CartModel.get_user_cart(request).order_by('id')
@@ -149,6 +155,9 @@ class CartUpdateAPI(generics.UpdateAPIView):
     serializer_class = CartUpdateSerializer
     permission_classes = [
         permissions.AllowAny
+    ]
+    authentication_classes = [
+        TokenAuthentication
     ]
     lookup_field = 'pk'
 
@@ -208,6 +217,9 @@ class CartAllDeleteAPI(generics.GenericAPIView):
     permission_classes = [
         permissions.AllowAny
     ]
+    authentication_classes = [
+        TokenAuthentication
+    ]
 
     def get_queryset(self):
         queryset = CartModel.get_user_cart(self.request).order_by('id')
@@ -226,6 +238,9 @@ class CartAllDeleteAPI(generics.GenericAPIView):
 
 class ConfirmShopOrderAPI(generics.GenericAPIView):
     serializer_class = ShopOrderSerializer
+    authentication_classes = [
+        TokenAuthentication
+    ]
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

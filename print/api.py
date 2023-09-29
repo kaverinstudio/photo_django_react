@@ -1,4 +1,5 @@
 from rest_framework import permissions, generics
+from knox.auth import TokenAuthentication
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from datetime import datetime
@@ -16,6 +17,9 @@ from photo.settings import MEDIA_ROOT
 class FileViewAPI(generics.GenericAPIView):
     permission_classes = [
         permissions.AllowAny
+    ]
+    authentication_classes = [
+        TokenAuthentication
     ]
 
     def get(self, request):
@@ -56,6 +60,9 @@ class FileUpdateAPI(generics.UpdateAPIView):
     permission_classes = [
         permissions.AllowAny
     ]
+    authentication_classes = [
+        TokenAuthentication
+    ]
     lookup_field = 'pk'
 
     def get_queryset(self):
@@ -79,6 +86,9 @@ class FileDeleteAPI(generics.GenericAPIView):
     permission_classes = [
         permissions.AllowAny
     ]
+    authentication_classes = [
+        TokenAuthentication
+    ]
     lookup_field = 'pk'
 
     def get_queryset(self):
@@ -95,6 +105,9 @@ class FileDeleteAPI(generics.GenericAPIView):
 
 class ConfirmOrderAPI(generics.GenericAPIView):
     serializer_class = OrderSerializer
+    authentication_classes = [
+        TokenAuthentication
+    ]
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

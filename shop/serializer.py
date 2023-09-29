@@ -97,9 +97,17 @@ class ProductReviewCreateSerializer(serializers.ModelSerializer):
         fields = '__all__'
         
     def create(self, validated_data):
-        if self.context['request'].user.is_anonymous:
-            user = None
-        else:
-            user = self.context['request'].user
-        review = ProductReviewsModel.objects.create(user=user, **validated_data)
+        # if self.context['request'].user.is_anonymous:
+        #     user = None
+        # else:
+        #     user = self.context['request'].user
+        review = ProductReviewsModel.objects.create(**validated_data)
+        temp_reviews = ProductReviewsModel.objects.filter(product=validated_data['product'].id)
+        rating = 0
+        count = 0
+        for i in temp_reviews:
+            rating += i.rating
+            count += 1
+        product = ProductModel.objects.filter(id=validated_data['product'].id)
+        product.update(rating = rating / count)
         return review

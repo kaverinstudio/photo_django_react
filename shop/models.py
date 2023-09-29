@@ -72,13 +72,9 @@ class CartModel(models.Model):
 
     @classmethod
     def get_user_cart(cls, request):
-        localStorage = localStoragePy('photo', 'postgresql')
-        session_key = localStorage.getItem('session_key')
-        
         if request.user.is_anonymous:
-            return cls.objects.filter(models.Q(session_key=session_key))
-
-        return cls.objects.filter(models.Q(user=request.user) | models.Q(session_key=session_key))
+            return cls.objects.filter(models.Q(session_key=request.META.get('HTTP_X_CSRFTOKEN')))
+        return cls.objects.filter(models.Q(user=request.user) | models.Q(session_key=request.META.get('HTTP_X_CSRFTOKEN'))) 
 
 
 class ShopOrderModel(models.Model):

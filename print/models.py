@@ -1,6 +1,10 @@
 from django.db import models
 from .utils import user_directory_path
-from localStoragePy import localStoragePy
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
+from django.core.files.base import ContentFile
+from PIL import Image
+import os
 
 
 class Services(models.Model):
@@ -69,6 +73,7 @@ class Photo(models.Model):
     format = models.CharField(choices=FORMATS, max_length=50, default='10x15', blank=False)
     papier = models.CharField(choices=TYPES, max_length=50, default='Глянцевая', blank=False)
     file = models.ImageField(upload_to=user_directory_path, null=True)
+    thumb = models.ImageField(upload_to='', blank=True, null=True)
     session_key = models.CharField(max_length=100, blank=True, null=True)
     user = models.ForeignKey('user.UserModel', on_delete=models.SET_NULL, blank=True, null=True)
     uploaded_at = models.DateTimeField(auto_now_add=True, null=True)
@@ -80,17 +85,31 @@ class Photo(models.Model):
 
     @classmethod
     def get_user_photos(cls, request):
-        localStorage = localStoragePy('photo')
-        session_key = localStorage.getItem('session_key')
-
         if request.user.is_anonymous:
-            return cls.objects.filter(models.Q(session_key=session_key))
-
-        return cls.objects.filter(models.Q(user=request.user) | models.Q(session_key=session_key))
+            return cls.objects.filter(models.Q(session_key=request.META.get('HTTP_X_CSRFTOKEN')))
+        return cls.objects.filter(models.Q(user=request.user) | models.Q(session_key=request.META.get('HTTP_X_CSRFTOKEN'))) 
 
     @classmethod
     def get_initial_print(cls):
         return {cls.papier_size, cls.papier_type}
+    
+@receiver(pre_save, sender=Photo)
+def create_thumbnail(sender, instance, **kwargs):
+    if instance.file:
+        img = Image.open(instance.file)
+
+        thumbnail_size = (400, 400) 
+        img.thumbnail(thumbnail_size)
+        
+        instance.width = img.width 
+        instance.height = img.height
+
+        thumbnail_name = f"orders/thumb/{os.path.basename(instance.file.name)}"
+        
+        thumbnail_tmp = ContentFile(b'')
+        img.save(thumbnail_tmp, 'JPEG')
+
+        instance.thumb.save(thumbnail_name, thumbnail_tmp, save=False)
 
 
 class Orders(models.Model):

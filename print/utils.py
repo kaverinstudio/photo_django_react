@@ -1,6 +1,5 @@
-from localStoragePy import localStoragePy
 from pytils import translit
-from datetime import datetime
+
 
 
 def user_directory_path(instance, filename):
@@ -12,16 +11,14 @@ def user_directory_path(instance, filename):
 
 def user_order_path(instance):
     if instance.user.is_anonymous:
-        localStorage = localStoragePy('photo')
-        session_key = localStorage.getItem('session_key')
+        session_key = instance.META.get('HTTP_X_CSRFTOKEN')
         return 'pictures/orders/%s' % (session_key)
     return 'pictures/orders/%s_%s' % (translit.translify(instance.user.username), instance.user.email)
 
 
 def get_user_name(instance):
     if instance.user.is_anonymous:
-        localStorage = localStoragePy('photo')
-        session_key = localStorage.getItem('session_key')
+        session_key = instance.META.get('HTTP_X_CSRFTOKEN')
         return session_key
     return f'%s_%s' % (translit.translify(instance.user.username), instance.user.email)
 

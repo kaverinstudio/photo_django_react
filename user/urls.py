@@ -4,7 +4,6 @@ from .api import UserAPI, RegisterAPI, LoginAPI, UpdateAPI, UploadAvatarAPI
 from knox import views as knox_views
 
 router = routers.DefaultRouter()
-# router.register('api/auth', UserViewSet)
 
 urlpatterns = [
     path('api/auth', include('knox.urls')),
